@@ -15,7 +15,7 @@ function getmenu($userid,$catid=NULL)
 		}
 	}
 
-	if ($catid===0) {
+	if ($catid==0) {
 		$menu.="<TR><TD CLASS=\"ccat\"><SPAN CLASS=\"plain\">View All</SPAN></TD></TR>\n";
 	} else {
 		$menu.="<TR><TD CLASS=\"cat\"><A CLASS=\"cat\" HREF=\"cat.php?catid=0\">View All</A></TD></TR>\n";
