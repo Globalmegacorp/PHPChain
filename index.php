@@ -11,6 +11,7 @@ $db=sql_conn();
 $auth=checkcookies($db);
 
 $login=$_COOKIE["login"];
+$output="";
 
 if ($auth) {
 	$output="<P CLASS=\"intro\">\n";
@@ -43,7 +44,10 @@ if ($auth) {
 		$output.="</TABLE>";
 	}
 } else {
-	$output="<P CLASS=\"intro\">
+	if (isset($_GET["idle"])) {
+		$output.="Your session has timed out and you have been logged out.<br />";
+	}
+	$output.="<P CLASS=\"intro\">
 Welcome to PHPChain.
 <P CLASS=\"intro\">
 PHPChain is a secure database for storing important passwords. Data is stored encrypted using the Blowfish algorithm for security. You may login, or create a login from the links in the menu above.

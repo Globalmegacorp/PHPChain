@@ -17,6 +17,29 @@ if ($_SERVER["HTTPS"]!="on") {
 <HEAD>
 <LINK REL=StyleSheet HREF="style.css" TYPE="text/css">
 <TITLE>PHPChain</TITLE>
+<script>
+var inactivityTime = function () {
+    var time;
+    // DOM Events
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+    document.onload = resetTimer;
+    document.onmousedown = resetTimer; // touchscreen presses
+    document.ontouchstart = resetTimer;
+    document.onclick = resetTimer;     // touchpad clicks
+    document.onscroll = resetTimer;    // scrolling with arrow keys
+
+    function logout() {
+        location.href = 'logout.php?idle=1'
+    }
+
+    function resetTimer() {
+      clearTimeout(time);
+      time = setTimeout(logout, 10*60*1000); // 1000 milliseconds = 1 second
+    }
+};
+inactivityTime();
+</script>
 </HEAD>
 <BODY CLASS="main">
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%">
