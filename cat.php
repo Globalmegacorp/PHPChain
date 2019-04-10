@@ -59,7 +59,7 @@ switch($action) {
 	break;
 	case "view":
 		$catid=gorp("catid");
-		$query = "select id, iv, login, password, site, url from logins where userid = \"$userid\"";
+		$query = "select l.id, l.iv, l.login, l.password, l.site, l.url, c.title from logins l join cat c on l.catid = c.id where l.userid = \"$userid\"";
 		if (!empty($catid)) {
 			$query .= " and catid = \"$catid\"";
 		}
@@ -72,9 +72,12 @@ switch($action) {
 			
 			$output.="<TABLE BORDER=\"0\" CELLPADDING=\"2\" CELLSPACING=\"1\">\n";
 			$output.="<TR>\n";
+			if (empty($catid)) {
+				$output.="<TD CLASS=\"header\" WIDTH=\"80\">Category</TD>\n";
+			}
 			$output.="<TD CLASS=\"header\" WIDTH=\"300\">Site</TD>\n";
 			$output.="<TD CLASS=\"header\" WIDTH=\"200\">Login</TD>\n";
-			$output.="<TD CLASS=\"header\" WIDTH=\"150\">Password</TD>\n";
+			$output.="<TD CLASS=\"header\" WIDTH=\"120\">Password</TD>\n";
 			$output.="<TD CLASS=\"header\" WIDTH=\"80\">Action</TD>\n";
 			$output.="</TR>\n";
 
@@ -83,7 +86,7 @@ switch($action) {
 				$password=htmlspecialchars(trim(decrypt($key,base64_decode($row["password"]),base64_decode($row["iv"]))));
 				$site=htmlspecialchars(trim(decrypt($key,base64_decode($row["site"]),base64_decode($row["iv"]))));
 				$url=trim(decrypt($key,base64_decode($row["url"]),base64_decode($row["iv"])));
-				$resarray[]=array("id"=>$row["id"], "login"=>$login, "password"=>$password, "site"=>$site, "url"=>$url);
+				$resarray[]=array("id"=>$row["id"], "login"=>$login, "password"=>$password, "site"=>$site, "url"=>$url, "category"=>$row["title"]);
 				$sortarray[]=$site;
 			}
 
@@ -92,7 +95,11 @@ switch($action) {
 			foreach ($resarray as $val) {
 				if (strlen($val["url"])>1) $outsite="<A HREF=\"".$val["url"]."\" TARGET=\"_blank\">".$val["site"]."</A>";
 				else $outsite=$val["site"];
-				$output.="<TR><TD CLASS=\"row\">".$outsite."</TD>\n";
+				$output.="<TR>";
+				if (empty($catid)) {
+					$output.="<TD CLASS=\"row\">".$val["category"]."</TD>\n";	
+				}
+				$output.="<TD CLASS=\"row\">".$outsite."</TD>\n";
 				$output.="<TD CLASS=\"row\">".$val["login"]."</TD>\n";
 				$output.="<TD OnMouseOver=\"this.style.color='#000000'\" OnMouseOut=\"this.style.color='#fdfed0'\" CLASS=\"password\">".$val["password"]."</TD>\n";
 				$output.="<TD CLASS=\"row\"><A HREF=\"".$_SERVER["PHP_SELF"]."?action=edit&itemid=".$val["id"]."\">Edit</A> | <A HREF=\"".$_SERVER["PHP_SELF"]."?action=delete&itemid=".$val["id"]."&catid=".$catid."\">Delete</A></TD>\n";
