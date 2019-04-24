@@ -11,7 +11,7 @@ $db=sql_conn();
 $auth=checkcookies($db);
 
 if (!$auth) {
-	header("Location: index.php");
+	header("Location: logout.php");
 	die();
 }
 
