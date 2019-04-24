@@ -58,7 +58,7 @@ if ($auth) {
 	$left.="<A HREF=\"settings.php\" CLASS=\"menubar\">Settings</A>";
 	$left.="<A HREF=\"password.php\" CLASS=\"menubar\">Password</A>";
 	$left.="<A HREF=\"logout.php\" CLASS=\"menubar\">Logout</A>";
-	$right.="Logged in as: ".$_COOKIE["login"];
+	$right.="Logged in as: ".$auth->login;
 } else {
 	$left.="<A HREF=\"newlogin.php\" CLASS=\"menubar\">Create login</A>";
 	$right.=form_begin("login.php","POST");
@@ -88,9 +88,9 @@ if ($auth) {
 	include ("inc/menu.php");
         $catid="none";
         if ($page=="cat") {
-               $catid=gorp("catid","");
+               $catid=gorp($db, "catid","");
         }
-	echo getmenu($_COOKIE["id"],$catid);
+	echo getmenu($auth->id,$catid);
 }
 ?>
 <TR>

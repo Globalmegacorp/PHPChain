@@ -3,11 +3,13 @@ include ("inc/db.php");
 include ("inc/form.php");
 include ("inc/crypt.php");
 
-$login=$_POST["login"];
-$key=$_POST["key"];
+$db=sql_conn();
+
+$login=mysqli_real_escape_string($db, $_POST["login"]);
+$key=mysqli_real_escape_string($db, $_POST["key"]);
 
 if (empty($login)) {
-	$login=$_COOKIE["login"];
+	$login=mysqli_real_escape_string($db, $_COOKIE["login"]);
 	if (empty($login)) unset ($login);
 }
 if (empty($key)) unset ($key);
@@ -22,9 +24,6 @@ $output="";
 $error="";
 
 if (isset($login)&&isset($key)) {
-	// Do DB login, redirect to welcome page.
-	$db=sql_conn();
-
 	// Check for failed login attempts in the last 10 minutes.
 	$result=mysqli_query($db, "select count(name) from loginlog where date > date_sub(now(), INTERVAL 10 minute) and ip = \"$ip\" and outcome = 0");
 	$row=mysqli_fetch_row($result);

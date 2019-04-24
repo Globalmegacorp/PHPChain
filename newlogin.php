@@ -5,9 +5,11 @@ include ("inc/form.php");
 
 $auth=false;
 
-if (isset($_POST["login"])) $login=$_POST["login"];
-if (isset($_POST["key"])) $key=$_POST["key"];
-if (isset($_POST["key2"])) $key2=$_POST["key2"];
+$db=sql_conn();
+
+if (isset($_POST["login"])) $login=mysqli_real_escape_string($db, $_POST["login"]);
+if (isset($_POST["key"])) $key=mysqli_real_escape_string($db, $_POST["key"]);
+if (isset($_POST["key2"])) $key2=mysqli_real_escape_string($db, $_POST["key2"]);
 
 if (empty($login)) unset ($login);
 
@@ -20,8 +22,6 @@ if (isset($login)) {
 	if (strlen($key)<6) $error.="<SPAN CLASS=\"error\">Password must be at least 6 characters long.</SPAN><BR>\n";
 
 	// Login already exist?
-
-	$db=sql_conn();
 
 	$result=mysqli_query($db, "select id from user where name = \"$login\"");
 	if (mysqli_num_rows($result)!=0) {
@@ -55,7 +55,7 @@ $output.="<P CLASS=\"plain\">Password must be at least 6 characters long";
 $output.="<P>";
 $output.=form_begin($_SERVER["PHP_SELF"],"POST");
 $output.="<TABLE BORDER=\"0\" CELLPADDING=\"2\" CELLSPACING=\"0\">\n";
-$output.="<TR><TD CLASS=\"plain\">New Login: </TD><TD CLASS=\"plain\">".input_text("login",20,255,$login)."</TD></TR>\n";
+$output.="<TR><TD CLASS=\"plain\">New Login: </TD><TD CLASS=\"plain\">".input_text("login",20,255,"")."</TD></TR>\n";
 $output.="<TR><TD CLASS=\"plain\">Password: </TD><TD CLASS=\"plain\">".input_passwd("key",20,255)."</TD></TR>\n";
 $output.="<TR><TD CLASS=\"plain\">Verify password: &nbsp;&nbsp;</TD><TD CLASS=\"plain\">".input_passwd("key2",20,255)."</TD></TR>\n";
 $output.="<TR><TD CLASS=\"plain\" COLSPAN=\"2\" ALIGN=\"RIGHT\">".submit("Create login")."</TD></TR>\n";

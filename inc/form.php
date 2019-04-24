@@ -91,12 +91,12 @@ function input_button ($name, $onclick="", $style="plain")
 {
 	return "<INPUT TYPE=\"BUTTON\" CLASS=\"$style\" VALUE=\"$name\" onClick=\"".$onclick."\">\n";
 }
-function gorp($fieldname, $default)
+function gorp($db, $fieldname, $default)
 {
 	if (strtolower($_SERVER["REQUEST_METHOD"])=="get") {
-		if(isset($_GET["$fieldname"])) return $_GET["$fieldname"];
+		if(isset($_GET["$fieldname"])) return mysqli_real_escape_string($db, $_GET["$fieldname"]);
 	} else if (strtolower($_SERVER["REQUEST_METHOD"])=="post") {
-		if(isset($_POST["$fieldname"])) return $_POST["$fieldname"];
+		if(isset($_POST["$fieldname"])) return mysqli_real_escape_string($db, $_POST["$fieldname"]);
 	}
 	return $default;
 }

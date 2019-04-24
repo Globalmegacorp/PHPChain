@@ -15,10 +15,10 @@ if (!$auth) {
 	die();
 }
 
-$userid=$_COOKIE["id"];
-$key=$_COOKIE["key"];
+$userid=$auth->id;
+$key=$auth->key;
 
-$action=gorp("action", false);
+$action=gorp($db, "action", false);
 
 if (!$action) $action="view";
 
@@ -26,8 +26,8 @@ $output="";
 
 switch($action) {
 	case "delete":
-		$catid=gorp("catid",0);
-		$itemid=gorp("itemid",0);
+		$catid=gorp($db, "catid",0);
+		$itemid=gorp($db, "itemid",0);
 		
 		if (!empty($itemid)) {
 			$result=mysqli_query($db, "select site,iv from logins where id = \"$itemid\" and userid=\"$userid\"");
@@ -52,13 +52,13 @@ switch($action) {
 	break;
 
 	case "delete_db":
-		$catid=gorp("catid",0);
-		$itemid=gorp("itemid",0);
+		$catid=gorp($db, "catid",0);
+		$itemid=gorp($db, "itemid",0);
 		mysqli_query($db, "delete from logins where id = \"$itemid\" and userid = \"$userid\"");
 		header("Location: cat.php?catid=".$catid);
 	break;
 	case "view":
-		$catid=gorp("catid","all");
+		$catid=gorp($db, "catid","all");
 		if ($catid != "all" && !is_numeric($catid)) {
                         $catid="all";
                 }
@@ -92,7 +92,7 @@ switch($action) {
 				$thisrow=array("id"=>$row["id"], "login"=>$login, "password"=>$password, "site"=>$site, "url"=>$url, "category"=>$row["title"]);
 				$resarray[]=$thisrow;
 				$valid_sort_fields=array("login","site","category");
-				$sort=gorp("sort","site");
+				$sort=gorp($db, "sort","site");
 				if (!in_array($sort, $valid_sort_fields)) {
 					$sort="site";
 				}
@@ -118,7 +118,7 @@ switch($action) {
 		}
 	break;
 	case "edit":
-		$itemid=gorp("itemid",0);
+		$itemid=gorp($db, "itemid",0);
 		if ($itemid!=0) {
 			//Get existing data and decrypt it first.
 			$result=mysqli_query($db, "select id, iv, catid, login, password, site, url from logins where id = \"$itemid\" and userid=\"$userid\"");
@@ -137,7 +137,7 @@ switch($action) {
 				$url="";
 			}
 		} else {
-			$catid=gorp("catid",0);
+			$catid=gorp($db, "catid",0);
 			$login="";
 			$password="";
 			$site="";
@@ -167,12 +167,12 @@ switch($action) {
 	break;
 
 	case "save":
-		$itemid=gorp("itemid",0);
-		$catid=gorp("catid",0);
-		$login=gorp("login","");
-		$password=gorp("password","");
-		$site=gorp("site","");
-		$url=gorp("url","");
+		$itemid=gorp($db, "itemid",0);
+		$catid=gorp($db, "catid",0);
+		$login=gorp($db, "login","");
+		$password=gorp($db, "password","");
+		$site=gorp($db, "site","");
+		$url=gorp($db, "url","");
 
 		if (strpos($url,"http://")===FALSE && strpos($url,"https://")===FALSE && !empty($url)) $url="http://".$url;
 

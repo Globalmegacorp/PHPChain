@@ -15,9 +15,9 @@ if (!$auth) {
 	die();
 }
 
-$newkey=gorp("newkey","");
-$newkey2=gorp("newkey2","");
-$complete=gorp("complete",false);
+$newkey=gorp($db, "newkey","");
+$newkey2=gorp($db, "newkey2","");
+$complete=gorp($db, "complete",false);
 
 $output="<P CLASS=\"plain\">";
 $error="";
@@ -27,10 +27,6 @@ if (!empty($newkey)&&!empty($newkey2)) {
 	if (strlen($newkey)<6) $error.="<SPAN CLASS=\"error\">Password must be at least 6 characters long.</SPAN><BR>\n";
 
 	if (empty($error)) {
-		$key=$_COOKIE["key"];
-		$userid=$_COOKIE["id"];
-		$login=$_COOKIE["login"];
-
 		$newkey=md5($newkey);
 
 		// Create new entry in user table.
@@ -38,16 +34,16 @@ if (!empty($newkey)&&!empty($newkey2)) {
 		$teststring=base64_encode(encrypt($newkey,maketeststring(),$iv));
 		$iv=base64_encode($iv);
 
-		$result=mysqli_query($db, "insert user values (NULL, \"$login\", \"$teststring\", \"$iv\")");
+		$result=mysqli_query($db, "insert user values (NULL, \"".$auth->login."\", \"$teststring\", \"$iv\")");
 		$id=mysqli_insert_id($db);
 
-		$result=mysqli_query($db, "select id, iv, catid, login, password, site, url from logins where userid = \"$userid\"");
+		$result=mysqli_query($db, "select id, iv, catid, login, password, site, url from logins where userid = \"".$auth->id."\"");
 
 		while ($row=mysqli_fetch_assoc($result)) {
-			$login=trim(decrypt($key,base64_decode($row["login"]),base64_decode($row["iv"])));
-			$password=trim(decrypt($key,base64_decode($row["password"]),base64_decode($row["iv"])));
-			$site=trim(decrypt($key,base64_decode($row["site"]),base64_decode($row["iv"])));
-			$url=trim(decrypt($key,base64_decode($row["url"]),base64_decode($row["iv"])));
+			$login=trim(decrypt($auth->key,base64_decode($row["login"]),base64_decode($row["iv"])));
+			$password=trim(decrypt($auth->key,base64_decode($row["password"]),base64_decode($row["iv"])));
+			$site=trim(decrypt($auth->key,base64_decode($row["site"]),base64_decode($row["iv"])));
+			$url=trim(decrypt($auth->key,base64_decode($row["url"]),base64_decode($row["iv"])));
 			$catid=$row["catid"];
 
 			$iv=make_iv();
@@ -61,9 +57,9 @@ if (!empty($newkey)&&!empty($newkey2)) {
 
 		// DB cleanup.
 
-		mysqli_query($db, "update cat set userid = \"$id\" where userid = \"$userid\"");
-		mysqli_query($db, "delete from logins where userid = \"$userid\"");
-		mysqli_query($db, "delete from user where id = \"$userid\"");
+		mysqli_query($db, "update cat set userid = \"$id\" where userid = \"".$auth->id."\"");
+		mysqli_query($db, "delete from logins where userid = \"".$auth->id."\"");
+		mysqli_query($db, "delete from user where id = \"".$auth->id."\"");
 
 		// Set new cookies
 

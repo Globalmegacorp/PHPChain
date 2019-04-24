@@ -10,7 +10,6 @@ $db=sql_conn();
 
 $auth=checkcookies($db);
 
-$login=$_COOKIE["login"];
 $output="";
 
 if ($auth) {
@@ -25,7 +24,7 @@ if ($auth) {
 //		$format="%d/%m/%Y %T"." (PST)";
 //	}
 
-	$result=mysqli_query($db, "select date_format(date,\"$format\") as date, ip, outcome from loginlog where name = \"$login\" order by loginlog.date desc limit 10");
+	$result=mysqli_query($db, "select date_format(date,\"$format\") as date, ip, outcome from loginlog where name = \"".$auth->login."\" order by loginlog.date desc limit 10");
 	if (mysqli_num_rows($result)>0) {
 		$class = array (0 => "error", 1=> "plain");
 		$outcome = array (0 => "Failed", 1=> "Ok");

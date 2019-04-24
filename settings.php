@@ -15,8 +15,8 @@ if (!$auth) {
 	die();
 }
 
-$action=gorp("action",false);
-$userid=$_COOKIE["id"];
+$action=gorp($db, "action",false);
+$userid=$auth->id;
 
 $output="";
 
@@ -24,8 +24,8 @@ $output="";
 if ($action!==false) {
 	switch ($action) {
 		case "save":
-			$catid=gorp("catid",0);
-			$title=gorp("title","");
+			$catid=gorp($db, "catid",0);
+			$title=gorp($db, "title","");
 			if ($catid==0) {
 				$query="insert cat values (NULL, \"$userid\", \"$title\")";
 			} else {
@@ -38,7 +38,7 @@ if ($action!==false) {
 
 		case "delete":
 			// Check to see if this cat is used.
-			$catid=gorp("catid",0);
+			$catid=gorp($db, "catid",0);
 			$result=mysqli_query($db, "select count(id) from logins where userid=\"$userid\" and catid=\"$catid\"");
 			$row=mysqli_fetch_row($result);
 			if ($row[0]>0) {
@@ -51,7 +51,7 @@ if ($action!==false) {
 		break;
 
 		case "edit":
-			$catid=gorp("catid",0);
+			$catid=gorp($db, "catid",0);
 			if ($catid==0) {
 				$title="";
 			} else {
@@ -73,7 +73,7 @@ if ($action!==false) {
 	}
 } else {
 	$result=mysqli_query($db, "select id, title from cat where userid = \"$userid\"");
-	$error=gorp("error","");
+	$error=gorp($db, "error","");
 
 	if (!empty($error)) {
 		$error="<SPAN CLASS=\"error\">Unable to delete. Remove entries from category first</SPAN>";

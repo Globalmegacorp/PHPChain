@@ -5,9 +5,9 @@ function checkcookies($db)
 		return false;
 	}
 
-	$login=$_COOKIE["login"];
-	$key=$_COOKIE["key"];
-	$id=$_COOKIE["id"];
+	$login=mysqli_real_escape_string($db, $_COOKIE["login"]);
+	$key=mysqli_real_escape_string($db, $_COOKIE["key"]);
+	$id=mysqli_real_escape_string($db, $_COOKIE["id"]);
 
 	// Basic sanity checks first.
 	if (empty($login)||empty($key)||empty($id)||($key=="deleted")||($id=="deleted")) {
@@ -24,8 +24,11 @@ function checkcookies($db)
 		if ($result != NULL && mysqli_num_rows($result) == 1) {
 			$row=mysqli_fetch_row($result);
 			if (testteststring(trim(decrypt($key,base64_decode($row[1]),base64_decode($row[2]))))) {
-				// Mmmm! Good cookies!
-				return TRUE;
+				$auth = new stdClass();
+				$auth->login=$login;
+				$auth->id=$id;
+				$auth->key=$key;
+				return $auth;
 			} else {
 				return FALSE;
 			}

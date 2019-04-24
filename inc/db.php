@@ -1,7 +1,9 @@
 <?php
 // database.php -- MySQL database access functions
 // This file contains the MySQL password - CAREFUL!
-	
+
+$auth=false;
+
 // Configuration settings
 $sql_vars = array(
 	'host' => "localhost",			// SQL server host
