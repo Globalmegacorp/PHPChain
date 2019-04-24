@@ -36,9 +36,7 @@ document. See the following site for information:
 
 http://www.modssl.org/
 
-===============================================================================
-IF YOU DO NOT USE SSL. YOUR PASSWORDS WILL BE SENT PLAINTEXT OVER THE INTERNET!
-===============================================================================
+*IF YOU DO NOT USE SSL. YOUR PASSWORDS WILL BE SENT PLAINTEXT OVER THE INTERNET!*
 
 There's no excuse for not using SSL any more: https://letsencrypt.org/
 
