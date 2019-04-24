@@ -18,16 +18,16 @@ if (!$auth) {
 $userid=$_COOKIE["id"];
 $key=$_COOKIE["key"];
 
-$action=gorp("action");
+$action=gorp("action", false);
 
-if (empty($action)) $action="view";
+if (!$action) $action="view";
 
 $output="";
 
 switch($action) {
 	case "delete":
-		$catid=gorp("catid");
-		$itemid=gorp("itemid");
+		$catid=gorp("catid",0);
+		$itemid=gorp("itemid",0);
 		
 		if (!empty($itemid)) {
 			$result=mysqli_query($db, "select site,iv from logins where id = \"$itemid\" and userid=\"$userid\"");
@@ -52,15 +52,18 @@ switch($action) {
 	break;
 
 	case "delete_db":
-		$catid=gorp("catid");
-		$itemid=gorp("itemid");
+		$catid=gorp("catid",0);
+		$itemid=gorp("itemid",0);
 		mysqli_query($db, "delete from logins where id = \"$itemid\" and userid = \"$userid\"");
 		header("Location: cat.php?catid=".$catid);
 	break;
 	case "view":
-		$catid=gorp("catid");
+		$catid=gorp("catid","all");
+		if ($catid != "all" && !is_numeric($catid)) {
+                        $catid="all";
+                }
 		$query = "select l.id, l.iv, l.login, l.password, l.site, l.url, c.title from logins l join cat c on l.catid = c.id where l.userid = \"$userid\"";
-		if (!empty($catid)) {
+		if ($catid != "all") {
 			$query .= " and catid = \"$catid\"";
 		}
 
@@ -72,11 +75,11 @@ switch($action) {
 			
 			$output.="<TABLE BORDER=\"0\" CELLPADDING=\"2\" CELLSPACING=\"1\">\n";
 			$output.="<TR>\n";
-			if (empty($catid)) {
-				$output.="<TD CLASS=\"header\" WIDTH=\"80\">Category</TD>\n";
+			if ($catid=="all") {
+				$output.="<TD CLASS=\"header\" WIDTH=\"80\"><a href=\"cat.php?catid=all&sort=category\">Category</a></TD>\n";
 			}
-			$output.="<TD CLASS=\"header\" WIDTH=\"300\">Site</TD>\n";
-			$output.="<TD CLASS=\"header\" WIDTH=\"200\">Login</TD>\n";
+			$output.="<TD CLASS=\"header\" WIDTH=\"300\"><a href=\"cat.php?catid=".$catid."&sort=site\">Site</a></TD>\n";
+			$output.="<TD CLASS=\"header\" WIDTH=\"200\"><a href=\"cat.php?catid=".$catid."&sort=login\">Login</a></TD>\n";
 			$output.="<TD CLASS=\"header\" WIDTH=\"120\">Password</TD>\n";
 			$output.="<TD CLASS=\"header\" WIDTH=\"80\">Action</TD>\n";
 			$output.="</TR>\n";
@@ -86,8 +89,14 @@ switch($action) {
 				$password=htmlspecialchars(trim(decrypt($key,base64_decode($row["password"]),base64_decode($row["iv"]))));
 				$site=htmlspecialchars(trim(decrypt($key,base64_decode($row["site"]),base64_decode($row["iv"]))));
 				$url=trim(decrypt($key,base64_decode($row["url"]),base64_decode($row["iv"])));
-				$resarray[]=array("id"=>$row["id"], "login"=>$login, "password"=>$password, "site"=>$site, "url"=>$url, "category"=>$row["title"]);
-				$sortarray[]=$site;
+				$thisrow=array("id"=>$row["id"], "login"=>$login, "password"=>$password, "site"=>$site, "url"=>$url, "category"=>$row["title"]);
+				$resarray[]=$thisrow;
+				$valid_sort_fields=array("login","site","category");
+				$sort=gorp("sort","site");
+				if (!in_array($sort, $valid_sort_fields)) {
+					$sort="site";
+				}
+				$sortarray[]=$thisrow[$sort];
 			}
 
 			array_multisort($sortarray, SORT_ASC, $resarray);
@@ -96,7 +105,7 @@ switch($action) {
 				if (strlen($val["url"])>1) $outsite="<A HREF=\"".$val["url"]."\" TARGET=\"_blank\">".$val["site"]."</A>";
 				else $outsite=$val["site"];
 				$output.="<TR>";
-				if (empty($catid)) {
+				if ($catid=="all") {
 					$output.="<TD CLASS=\"row\">".$val["category"]."</TD>\n";	
 				}
 				$output.="<TD CLASS=\"row\">".$outsite."</TD>\n";
@@ -109,7 +118,7 @@ switch($action) {
 		}
 	break;
 	case "edit":
-		$itemid=gorp("itemid");
+		$itemid=gorp("itemid",0);
 		if ($itemid!=0) {
 			//Get existing data and decrypt it first.
 			$result=mysqli_query($db, "select id, iv, catid, login, password, site, url from logins where id = \"$itemid\" and userid=\"$userid\"");
@@ -128,7 +137,7 @@ switch($action) {
 				$url="";
 			}
 		} else {
-			$catid=gorp("catid");
+			$catid=gorp("catid",0);
 			$login="";
 			$password="";
 			$site="";
@@ -158,12 +167,12 @@ switch($action) {
 	break;
 
 	case "save":
-		$itemid=gorp("itemid");
-		$catid=gorp("catid");
-		$login=gorp("login");
-		$password=gorp("password");
-		$site=gorp("site");
-		$url=gorp("url");
+		$itemid=gorp("itemid",0);
+		$catid=gorp("catid",0);
+		$login=gorp("login","");
+		$password=gorp("password","");
+		$site=gorp("site","");
+		$url=gorp("url","");
 
 		if (strpos($url,"http://")===FALSE && strpos($url,"https://")===FALSE && !empty($url)) $url="http://".$url;
 

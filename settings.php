@@ -15,17 +15,17 @@ if (!$auth) {
 	die();
 }
 
-$action=gorp("action");
+$action=gorp("action",false);
 $userid=$_COOKIE["id"];
 
 $output="";
 
 
-if (!empty($action)) {
+if ($action!==false) {
 	switch ($action) {
 		case "save":
-			$catid=gorp("catid");
-			$title=gorp("title");
+			$catid=gorp("catid",0);
+			$title=gorp("title","");
 			if ($catid==0) {
 				$query="insert cat values (NULL, \"$userid\", \"$title\")";
 			} else {
@@ -38,7 +38,7 @@ if (!empty($action)) {
 
 		case "delete":
 			// Check to see if this cat is used.
-			$catid=gorp("catid");
+			$catid=gorp("catid",0);
 			$result=mysqli_query($db, "select count(id) from logins where userid=\"$userid\" and catid=\"$catid\"");
 			$row=mysqli_fetch_row($result);
 			if ($row[0]>0) {
@@ -51,7 +51,7 @@ if (!empty($action)) {
 		break;
 
 		case "edit":
-			$catid=gorp("catid");
+			$catid=gorp("catid",0);
 			if ($catid==0) {
 				$title="";
 			} else {
@@ -73,7 +73,7 @@ if (!empty($action)) {
 	}
 } else {
 	$result=mysqli_query($db, "select id, title from cat where userid = \"$userid\"");
-	$error=gorp("error");
+	$error=gorp("error","");
 
 	if (!empty($error)) {
 		$error="<SPAN CLASS=\"error\">Unable to delete. Remove entries from category first</SPAN>";

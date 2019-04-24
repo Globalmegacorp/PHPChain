@@ -91,14 +91,14 @@ function input_button ($name, $onclick="", $style="plain")
 {
 	return "<INPUT TYPE=\"BUTTON\" CLASS=\"$style\" VALUE=\"$name\" onClick=\"".$onclick."\">\n";
 }
-function gorp($fieldname)
+function gorp($fieldname, $default)
 {
 	if (strtolower($_SERVER["REQUEST_METHOD"])=="get") {
 		if(isset($_GET["$fieldname"])) return $_GET["$fieldname"];
 	} else if (strtolower($_SERVER["REQUEST_METHOD"])=="post") {
 		if(isset($_POST["$fieldname"])) return $_POST["$fieldname"];
 	}
-	return "";
+	return $default;
 }
 
 

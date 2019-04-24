@@ -1,5 +1,5 @@
 <?php
-function getmenu($userid,$catid=NULL)
+function getmenu($userid,$catid)
 {
 	$db=sql_conn();
 	$menu="";
@@ -14,11 +14,10 @@ function getmenu($userid,$catid=NULL)
 			$menu.="<A CLASS=\"cat\" HREF=\"cat.php?catid=".$row[0]."\">".$row[1]."</A></TD></TR>\n";
 		}
 	}
-
-	if ($catid==0) {
+	if ($catid=="all") {
 		$menu.="<TR><TD CLASS=\"ccat\"><SPAN CLASS=\"plain\">View All</SPAN></TD></TR>\n";
 	} else {
-		$menu.="<TR><TD CLASS=\"cat\"><A CLASS=\"cat\" HREF=\"cat.php?catid=0\">View All</A></TD></TR>\n";
+		$menu.="<TR><TD CLASS=\"cat\"><A CLASS=\"cat\" HREF=\"cat.php?catid=all\">View All</A></TD></TR>\n";
 	}
 
 

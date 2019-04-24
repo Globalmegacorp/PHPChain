@@ -68,6 +68,9 @@ td.header {
 	font-size: 13px;
 	color: #ffffff;
 }
+td.header a {
+	color: #ffffff;
+}
 td.row {
 	background-color: #fdfed0;
 	text-align: left;

@@ -86,11 +86,10 @@ if (isset($warning)) {
 <?php
 if ($auth) {
 	include ("inc/menu.php");
-	$catid=NULL;
-	if ($page=="cat") {
-		$catid=gorp("catid");
-	}
-
+        $catid="none";
+        if ($page=="cat") {
+               $catid=gorp("catid","");
+        }
 	echo getmenu($_COOKIE["id"],$catid);
 }
 ?>

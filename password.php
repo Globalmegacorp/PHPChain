@@ -15,11 +15,9 @@ if (!$auth) {
 	die();
 }
 
-$newkey=gorp("newkey");
-$newkey2=gorp("newkey2");
-$complete=gorp("complete");
-
-if (empty($complete)) $complete=FALSE;
+$newkey=gorp("newkey","");
+$newkey2=gorp("newkey2","");
+$complete=gorp("complete",false);
 
 $output="<P CLASS=\"plain\">";
 $error="";
