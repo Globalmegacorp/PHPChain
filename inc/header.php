@@ -57,12 +57,13 @@ $right="";
 if ($auth) {
 	$left.="<A HREF=\"settings.php\" CLASS=\"menubar\">Settings</A>";
 	$left.="<A HREF=\"password.php\" CLASS=\"menubar\">Password</A>";
+        $left.="<A HREF=\"search.php\" CLASS=\"menubar\">Search</A>";	
 	$left.="<A HREF=\"logout.php\" CLASS=\"menubar\">Logout</A>";
 	$right.="Logged in as: ".$auth->login;
 } else {
 	$left.="<A HREF=\"newlogin.php\" CLASS=\"menubar\">Create login</A>";
 	$right.=form_begin("login.php","POST");
-	$right.="Login: ".input_text("login",8,255,$login,"login");
+	$right.="Login: ".input_text("login",8,255,"","login");
 	$right.="&nbsp;Password: ".input_passwd("key",8,255,NULL,"login")."&nbsp;";
 	$right.=submit("Login",NULL,"submit");
 	$right.=form_end();
